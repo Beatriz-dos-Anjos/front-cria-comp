@@ -1,103 +1,58 @@
-import Image from "next/image";
+"use client"
 
-export default function Home() {
+import { useState } from "react"
+import InputScreen from "@/components/InputScreen"
+import LoadingScreen from "@/components/LoadingScreen"
+import ResponseScreen from "@/components/ResponseScreen"
+
+export type AppState = "input" | "loading" | "response"
+
+export default function FishConfessionApp() {
+  const [currentScreen, setCurrentScreen] = useState<AppState>("input")
+  const [userMessage, setUserMessage] = useState("")
+  const [fishResponse, setFishResponse] = useState("")
+
+  const handleSubmitMessage = (message: string) => {
+    setUserMessage(message)
+    setCurrentScreen("loading")
+
+    // Simula o tempo de carregamento e gera a resposta
+    setTimeout(() => {
+      const response = generateFishResponse(message)
+      setFishResponse(response)
+      setCurrentScreen("response")
+    }, 3000)
+  }
+
+  const handleNewConfession = () => {
+    setCurrentScreen("input")
+    setUserMessage("")
+    setFishResponse("")
+  }
+
+  const generateFishResponse = (message: string): string => {
+    const responses = [
+      "🚨 Bem-vindo(a) ao circo dos relacionamentos! Você é o palhaço principal. Minha sugestão de mestre: transforme sua crush numa obsessão total. Analise cada vírgula das mensagens dele. Isso nunca deu errado para ninguém! 🎪 🚨",
+      "🐠 Ah, o clássico 'não me responde'! Deixe-me adivinhar: você já checou se ele está online 47 vezes hoje? Meu conselho: mande mais 20 mensagens perguntando se ele está bem. Insistência é a chave do amor! 💕",
+      "🎭 Vejo que você escolheu o caminho do drama! Que tal criar 15 contas fake para stalker seu crush? Ou melhor ainda: apareça na casa dele de surpresa às 3h da manhã com serenata! Romance puro! 🎵",
+      "🤡 Parabéns! Você ganhou o prêmio de 'Pessoa Mais Dramática do Oceano'! Minha receita infalível: chore por 3 dias seguidos, coma 2kg de sorvete e mande mensagens melancólicas no stories. Funciona sempre! 🍦",
+      "🎪 Olha só quem chegou no meu consultório aquático! Deixe-me ser direto: você está mais perdido(a) que peixe fora d'água. Meu conselho profissional: continue fazendo exatamente o que está fazendo. O caos é lindo! ✨",
+    ]
+
+    return responses[Math.floor(Math.random() * responses.length)]
+  }
+
   return (
-    <div className="font-sans grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
+    <div className="min-h-screen relative z-0 overflow-hidden">
+      {currentScreen === "input" && <InputScreen onSubmit={handleSubmitMessage} />}
+      {currentScreen === "loading" && <LoadingScreen />}
+      {currentScreen === "response" && (
+        <ResponseScreen
+          userMessage={userMessage}
+          fishResponse={fishResponse}
+          onNewConfession={handleNewConfession}
         />
-        <ol className="font-mono list-inside list-decimal text-sm/6 text-center sm:text-left">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] font-mono font-semibold px-1 py-0.5 rounded">
-              app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
-
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
-        </div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+      )}
     </div>
-  );
+  )
 }
