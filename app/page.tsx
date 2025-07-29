@@ -4,6 +4,7 @@ import { useState } from "react"
 import InputScreen from "@/components/InputScreen"
 import LoadingScreen from "@/components/LoadingScreen"
 import ResponseScreen from "@/components/ResponseScreen"
+import {supabase} from "@/lib/supabaseClient"
 
 export type AppState = "input" | "loading" | "response"
 
