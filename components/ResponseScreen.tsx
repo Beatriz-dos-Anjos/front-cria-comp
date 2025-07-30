@@ -36,7 +36,7 @@ export default function ResponseScreen({
       <div className="relative z-10 p-4 py-8">
         <div className="text-center mb-8">
           <h1 className="text-white text-2xl font-bold mb-2">🐠 Conselho do Peixe Sábio 🐠</h1>
-          <p className="text-white/70 text-sm">(Não recomendado por 99% dos psiquiatras)</p>
+          <p className="text-white/70 text-sm">(N&atilde;o recomendado por 99% dos psiquiatras)</p>
         </div>
 
         <div className="max-w-2xl mx-auto space-y-6">
@@ -44,7 +44,7 @@ export default function ResponseScreen({
             <h2 className="text-orange-300 font-medium mb-2 flex items-center gap-2">
               🤔 Sua Dúvida Existencial:
             </h2>
-            <p className="text-white/90 italic">"{userMessage}"</p>
+            <p className="text-white/90 italic">&quot;{userMessage}&quot;</p>
           </div>
 
           <div className="bg-white/20 backdrop-blur-md rounded-xl p-6 border border-white/30">

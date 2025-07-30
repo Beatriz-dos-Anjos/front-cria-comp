@@ -17,7 +17,7 @@ export default function FishConfessionApp() {
   setUserMessage(message)
   setCurrentScreen("loading")
 
-  const response = generateFishResponse(message)
+  const response = generateFishResponse()
   setFishResponse(response)
 
   // (Opcional) busca usuário autenticado
@@ -51,7 +51,7 @@ export default function FishConfessionApp() {
     setFishResponse("")
   }
 
-  const generateFishResponse = (message: string): string => {
+  const generateFishResponse = (): string => {
     const responses = [
       "🚨 Bem-vindo(a) ao circo dos relacionamentos! Você é o palhaço principal. Minha sugestão de mestre: transforme sua crush numa obsessão total. Analise cada vírgula das mensagens dele. Isso nunca deu errado para ninguém! 🎪 🚨",
       "🐠 Ah, o clássico 'não me responde'! Deixe-me adivinhar: você já checou se ele está online 47 vezes hoje? Meu conselho: mande mais 20 mensagens perguntando se ele está bem. Insistência é a chave do amor! 💕",
