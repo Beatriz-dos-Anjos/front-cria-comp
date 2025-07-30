@@ -4,6 +4,7 @@ import { useState } from "react"
 import InputScreen from "@/components/InputScreen"
 import LoadingScreen from "@/components/LoadingScreen"
 import ResponseScreen from "@/components/ResponseScreen"
+import {supabase} from "@/lib/supabaseClient"
 
 export type AppState = "input" | "loading" | "response"
 
@@ -12,17 +13,37 @@ export default function FishConfessionApp() {
   const [userMessage, setUserMessage] = useState("")
   const [fishResponse, setFishResponse] = useState("")
 
-  const handleSubmitMessage = (message: string) => {
-    setUserMessage(message)
-    setCurrentScreen("loading")
+ const handleSubmitMessage = async (message: string) => {
+  setUserMessage(message)
+  setCurrentScreen("loading")
 
-    // Simula o tempo de carregamento e gera a resposta
-    setTimeout(() => {
-      const response = generateFishResponse(message)
-      setFishResponse(response)
-      setCurrentScreen("response")
-    }, 3000)
+  const response = generateFishResponse(message)
+  setFishResponse(response)
+
+  // (Opcional) busca usuário autenticado
+  const { data: { user } } = await supabase.auth.getUser()
+
+  // Insere os dados na tabela 'conselhos'
+  const { error } = await supabase.from("conselhos").insert([
+    {
+      usuario_id: user?.id || 'anonymous',
+      angustia: message,
+      resposta: response,
+      audio_url: null,
+      // id e created_at são preenchidos automaticamente
+    },
+  ])
+
+  if (error) {
+    console.error("Erro ao salvar no Supabase:", error.message)
   }
+
+  setTimeout(() => {
+    setCurrentScreen("response")
+  }, 3000)
+}
+
+
 
   const handleNewConfession = () => {
     setCurrentScreen("input")
