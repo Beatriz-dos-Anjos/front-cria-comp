@@ -29,7 +29,7 @@ export default function LoadingScreen() {
       clearInterval(interval)
       clearInterval(stepInterval)
     }
-  }, [])
+  }, [steps.length])
 
   return (
     <div className="min-h-screen relative overflow-hidden">
@@ -66,8 +66,8 @@ export default function LoadingScreen() {
         </div>
 
         <div className="text-center px-4 max-w-md">
-          <p className="text-white/80 text-sm italic mb-2">"Enquanto eu trabalho, lembre-se:</p>
-          <p className="text-white text-sm">O amor pode ser cego, mas eu enxergo tudo!" 🐠 ✨</p>
+          <p className="text-white/80 text-sm italic mb-2">&quot;Enquanto eu trabalho, lembre-se:</p>
+          <p className="text-white text-sm">O amor pode ser cego, mas eu enxergo tudo!&quot; 🐠 ✨</p>
         </div>
       </div>
     </div>
