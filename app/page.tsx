@@ -13,24 +13,41 @@ export default function FishConfessionApp() {
   const [userMessage, setUserMessage] = useState("")
   const [fishResponse, setFishResponse] = useState("")
 
- const handleSubmitMessage = async (message: string) => {
+const handleSubmitMessage = async (message: string) => {
   setUserMessage(message)
   setCurrentScreen("loading")
 
-  const response = generateFishResponse(message)
-  setFishResponse(response)
+  // 1. Chama a IA no backend
+  const res = await fetch("https://ia-peixe-love.onrender.com/testar-resposta", {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({
+    usuario_id: "frontend", // ou user?.id se quiser salvar de forma personalizada
+    angustia: message,
+  }),
+})
 
-  // (Opcional) busca usuário autenticado
+
+  const data = await res.json()
+  console.log("Resposta da IA:", data)
+
+  const resposta_texto = data.resposta_texto
+  const audio_url = data.audio_url
+  // const imagem_url = data.imagem_url // se ativar imagem depois
+
+  setFishResponse(resposta_texto)
+
+  // 2. Busca usuário (opcional)
   const { data: { user } } = await supabase.auth.getUser()
 
-  // Insere os dados na tabela 'conselhos'
+  // 3. Salva no Supabase
   const { error } = await supabase.from("conselhos").insert([
     {
       usuario_id: user?.id || 'anonymous',
       angustia: message,
-      resposta: response,
-      audio_url: null,
-      // id e created_at são preenchidos automaticamente
+      resposta_texto: resposta_texto,
+      audio_url,
+      // imagem_url,
     },
   ])
 
@@ -38,6 +55,7 @@ export default function FishConfessionApp() {
     console.error("Erro ao salvar no Supabase:", error.message)
   }
 
+  // 4. Muda tela
   setTimeout(() => {
     setCurrentScreen("response")
   }, 3000)
@@ -51,17 +69,7 @@ export default function FishConfessionApp() {
     setFishResponse("")
   }
 
-  const generateFishResponse = (message: string): string => {
-    const responses = [
-      "🚨 Bem-vindo(a) ao circo dos relacionamentos! Você é o palhaço principal. Minha sugestão de mestre: transforme sua crush numa obsessão total. Analise cada vírgula das mensagens dele. Isso nunca deu errado para ninguém! 🎪 🚨",
-      "🐠 Ah, o clássico 'não me responde'! Deixe-me adivinhar: você já checou se ele está online 47 vezes hoje? Meu conselho: mande mais 20 mensagens perguntando se ele está bem. Insistência é a chave do amor! 💕",
-      "🎭 Vejo que você escolheu o caminho do drama! Que tal criar 15 contas fake para stalker seu crush? Ou melhor ainda: apareça na casa dele de surpresa às 3h da manhã com serenata! Romance puro! 🎵",
-      "🤡 Parabéns! Você ganhou o prêmio de 'Pessoa Mais Dramática do Oceano'! Minha receita infalível: chore por 3 dias seguidos, coma 2kg de sorvete e mande mensagens melancólicas no stories. Funciona sempre! 🍦",
-      "🎪 Olha só quem chegou no meu consultório aquático! Deixe-me ser direto: você está mais perdido(a) que peixe fora d'água. Meu conselho profissional: continue fazendo exatamente o que está fazendo. O caos é lindo! ✨",
-    ]
-
-    return responses[Math.floor(Math.random() * responses.length)]
-  }
+  
 
   return (
     <div className="min-h-screen relative z-0 overflow-hidden">
