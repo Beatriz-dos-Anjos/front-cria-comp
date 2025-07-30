@@ -1,0 +1,15 @@
+# Framework da API e servidor
+fastapi
+uvicorn[standard]
+
+# Validação de Dados e Configurações
+pydantic
+pydantic-settings
+
+# Carregamento de Variáveis de Ambiente
+python-dotenv
+
+# Clientes da API
+supabase
+google-generativeai
+openai
