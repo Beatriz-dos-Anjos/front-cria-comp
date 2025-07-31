@@ -3,29 +3,61 @@
 import Image from "next/image"
 import { Button } from "@/components/ui/button"
 import OceanBackground from "@/components/OceanBackground"
+import { supabase } from "@/lib/supabaseClient"
+import { useState } from "react"
 
 interface ResponseScreenProps {
   userMessage: string
   fishResponse: string
+  audioUrl: string
   onNewConfession: () => void
+  onSaveComplete: () => void
 }
 
 export default function ResponseScreen({
   userMessage,
   fishResponse,
+  audioUrl,
   onNewConfession,
+  onSaveComplete,
 }: ResponseScreenProps) {
-  const handleSaveWisdom = () => {
-    const wisdom = `🐠 Conselho do Peixe Sábio 🐠\n\nSua dúvida: ${userMessage}\n\nConselho: ${fishResponse}\n\n- Peixe Sardástico`
+  const [isSaving, setIsSaving] = useState(false)
 
-    if (navigator.share) {
-      navigator.share({
-        title: "Conselho do Peixe Sábio",
-        text: wisdom,
-      })
-    } else {
-      navigator.clipboard.writeText(wisdom)
-      alert("Sabedoria copiada para a área de transferência! 🐠")
+  const handleSaveWisdom = async () => {
+    setIsSaving(true)
+    console.log("💾 Tentando salvar sabedoria...")
+    
+    try {
+      const { data: authData, error: authError } = await supabase.auth.getUser()
+      const userId = authData?.user?.id || "anonymous"
+      
+      console.log("👤 Usuario ID:", userId)
+
+      const { data, error } = await supabase.from("conselhos").insert([
+        {
+          usuario_id: userId,
+          angustia: userMessage,
+          resposta_texto: fishResponse,
+          audio_url: audioUrl,
+        },
+      ]).select() // ✅ Adicionar .select() para retornar os dados inseridos
+
+      if (error) {
+        console.error("❌ Erro ao salvar:", error)
+        alert("Erro ao salvar sabedoria 😢")
+      } else {
+        console.log("✅ Sabedoria salva com sucesso:", data)
+        alert("🐠 Sabedoria salva com sucesso!")
+        
+        // ✅ Chamar o refresh do sidebar
+        console.log("🔄 Chamando refresh do sidebar...")
+        onSaveComplete()
+      }
+    } catch (err) {
+      console.error("❌ Erro inesperado:", err)
+      alert("Erro inesperado ao salvar 😢")
+    } finally {
+      setIsSaving(false)
     }
   }
 
@@ -36,7 +68,7 @@ export default function ResponseScreen({
       <div className="relative z-10 p-4 py-8">
         <div className="text-center mb-8">
           <h1 className="text-white text-2xl font-bold mb-2">🐠 Conselho do Peixe Sábio 🐠</h1>
-          <p className="text-white/70 text-sm">(N&atilde;o recomendado por 99% dos psiquiatras)</p>
+          <p className="text-white/70 text-sm">(Não recomendado por 99% dos psiquiatras)</p>
         </div>
 
         <div className="max-w-2xl mx-auto space-y-6">
@@ -80,17 +112,17 @@ export default function ResponseScreen({
 
             <Button
               onClick={handleSaveWisdom}
-              className="bg-gradient-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700 text-white px-6 py-2 rounded-lg shadow-lg"
+              disabled={isSaving}
+              className="bg-gradient-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700 text-white px-6 py-2 rounded-lg shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              💾 Salvar sabedoria
+              {isSaving ? "💾 Salvando..." : "💾 Salvar sabedoria"}
             </Button>
           </div>
 
           <div className="bg-orange-500/20 backdrop-blur-md rounded-xl p-4 border border-orange-400/30">
             <p className="text-orange-200 text-xs text-center">
               ⚠️ <strong>Aviso Legal:</strong> Este peixe não possui diploma em psicologia. Conselhos destinados
-              exclusivamente ao entretenimento e risadas. Para problemas sérios, procure um profissional (de verdade)!
-              🏥
+              exclusivamente ao entretenimento e risadas. Para problemas sérios, procure um profissional (de verdade)! 🏥
             </p>
           </div>
         </div>
