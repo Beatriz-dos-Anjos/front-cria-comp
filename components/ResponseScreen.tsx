@@ -4,7 +4,9 @@ import Image from "next/image"
 import { Button } from "@/components/ui/button"
 import OceanBackground from "@/components/OceanBackground"
 import { supabase } from "@/lib/supabaseClient"
-import { useState } from "react"
+import { useState, useEffect } from "react"
+import generateAvatar from "../lib/huggingFaceAPI";
+
 
 interface ResponseScreenProps {
   userMessage: string
@@ -22,15 +24,37 @@ export default function ResponseScreen({
   onSaveComplete,
 }: ResponseScreenProps) {
   const [isSaving, setIsSaving] = useState(false)
+  const [fishResponseVideo, setFishResponseVideo] = useState<string>("");
+
+  // Chama a função generateAvatar ao montar o componente ou quando audioUrl muda
+  // Supondo que userMessage pode ser usado como texto para gerar imagem, mas aqui usamos audioUrl e uma imagem fixa
+  // Substitua '/images/fish-avatar.png' por uma imagem dinâmica se necessário
+  useEffect(() => {
+    async function fetchVideo() {
+      // Chame a função passando a imagem e o áudio
+      // Se você tiver uma imagem dinâmica, substitua o caminho abaixo
+      const image = "/images/fish-avatar.png";
+      const audio = audioUrl;
+      const result = await generateAvatar(image, audio);
+      // Se a função retorna a URL, atualize o estado
+      if (typeof result === 'string') {
+        setFishResponseVideo(result);
+      } else {
+        console.error("generateAvatar não retornou uma URL válida");
+        setFishResponseVideo("");
+      }
+    }
+    fetchVideo();
+  }, [audioUrl]);
 
   const handleSaveWisdom = async () => {
     setIsSaving(true)
     console.log("💾 Tentando salvar sabedoria...")
-    
+
     try {
       const { data: authData, error: authError } = await supabase.auth.getUser()
       const userId = authData?.user?.id || "anonymous"
-      
+
       console.log("👤 Usuario ID:", userId)
 
       const { data, error } = await supabase.from("conselhos").insert([
@@ -48,7 +72,7 @@ export default function ResponseScreen({
       } else {
         console.log("✅ Sabedoria salva com sucesso:", data)
         alert("🐠 Sabedoria salva com sucesso!")
-        
+
         // ✅ Chamar o refresh do sidebar
         console.log("🔄 Chamando refresh do sidebar...")
         onSaveComplete()
@@ -83,12 +107,15 @@ export default function ResponseScreen({
             <div className="flex gap-4">
               <div className="flex-shrink-0">
                 <div className="w-16 h-16 bg-white rounded-lg p-1">
-                  <Image
-                    src="/images/fish-avatar.png"
-                    alt="Peixe Sardástico"
+                  {/* Exibe o vídeo retornado pela API no lugar do avatar */}
+                  <video
+                    src={fishResponseVideo}
                     width={60}
                     height={60}
                     className="w-full h-full object-contain"
+                    controls
+                    autoPlay
+                    loop
                   />
                 </div>
               </div>
