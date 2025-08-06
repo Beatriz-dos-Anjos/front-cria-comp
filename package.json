@@ -3,12 +3,13 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev --turbopack",
+    "dev": "next dev",
     "build": "next build",
     "start": "next start",
     "lint": "next lint"
   },
   "dependencies": {
+    "@gradio/client": "^1.16.0",
     "@radix-ui/react-slot": "^1.2.3",
     "@supabase/supabase-js": "^2.53.0",
     "class-variance-authority": "^0.7.1",
@@ -22,7 +23,6 @@
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
-    "@gradio/client": "^1.16.0",
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
     "@types/react": "^19",

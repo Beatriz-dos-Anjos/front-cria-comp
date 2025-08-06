@@ -1,0 +1,7 @@
+onlyBuiltDependencies:
+  - '@tailwindcss/oxide'
+  - bufferutil
+  - msw
+  - sharp
+  - supabase
+  - unrs-resolver
