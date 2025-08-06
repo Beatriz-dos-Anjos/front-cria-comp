@@ -83,14 +83,14 @@ export default function Sidebar({ refreshKey }: SidebarProps) {
                 <div className="mb-2">
                   <div className="text-xs font-medium text-gray-600 mb-1">🤔 Sua dúvida:</div>
                   <div className="text-sm text-gray-800 line-clamp-2">
-                    "{sabedoria.angustia}"
+                    &quot;{sabedoria.angustia}&quot;
                   </div>
                 </div>
                 
                 <div>
                   <div className="text-xs font-medium text-blue-600 mb-1">🐠 Conselho:</div>
                   <div className="text-sm text-gray-700 italic line-clamp-3">
-                    "{sabedoria.resposta_texto}"
+                    &quot;{sabedoria.resposta_texto}&quot;
                   </div>
                 </div>
               </div>

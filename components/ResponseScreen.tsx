@@ -28,7 +28,7 @@ export default function ResponseScreen({
     console.log("💾 Tentando salvar sabedoria...")
     
     try {
-      const { data: authData, error: authError } = await supabase.auth.getUser()
+      const { data: authData } = await supabase.auth.getUser()
       const userId = authData?.user?.id || "anonymous"
       
       console.log("👤 Usuario ID:", userId)
